@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, 
+        minimum-scale=1.0,maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="style.css">
+    <title>My Canvas</title>
+</head>
+<body>
+    <div id="info">
+        <h3 >Start drawing on the canvas below!</h3>
+        <ul>
+            <li>On PC, hold your mouse button to draw</li>
+            <li>On mobile devices, touch your screen to draw</li>
+        </ul>
+    </div>
+    <canvas id="canvas"></canvas>
+    <script>
+        const info = document.getElementById("info");
+        const infoStyle = window.getComputedStyle(info) || info.currentStyle;
+
+        let canvas = document.getElementById("canvas");
+        canvasStyle = window.getComputedStyle(canvas) || info.currentStyle;
+
+        // set canvas width and height
+        const offsetX = parseInt(canvasStyle.borderLeftWidth) + parseInt(infoStyle.marginLeft);
+        const offsetY = parseInt(canvasStyle.borderTopWidth) + info.clientHeight + 
+            parseInt(infoStyle.marginTop);
+        canvas.width = document.documentElement.clientWidth - 2 * offsetX;
+        canvas.height = document.documentElement.clientHeight - offsetY -
+            - parseInt(canvasStyle.borderTopWidth) - 3 * parseInt(infoStyle.marginTop);
+        
+        // configure canvas context
+        let ctx = canvas.getContext('2d');
+        ctx.fillStyle = "black";
+        ctx.lineWidth = 8;
+        ctx.lineCap = "round";
+
+        // set previous point
+        let prevPoint;
+
+        // draw on canvas
+
+        const isTouchDevice = 'ontouchstart' in window;
+
+        if (isTouchDevice === true) {
+            canvas.ontouchstart = (e) => {
+                prevPoint = [e.touches[0].clientX - offsetX, e.touches[0].clientY - offsetY];
+            }
+
+            canvas.ontouchmove = (e) => {
+                const curPoint = [e.touches[0].clientX - offsetX, e.touches[0].clientY - offsetY];
+
+                connectPoints(prevPoint, curPoint);
+
+                prevPoint = curPoint;
+            }
+        } else {
+            let inPainting = false;
+
+            // handle mouse events
+            canvas.onmousedown = (e) => {
+                inPainting = true;
+                prevPoint = [e.clientX - offsetX, e.clientY - offsetY];
+            }
+
+            canvas.onmousemove = (e) => {
+                if (inPainting === true) {
+                    const curPoint = [e.clientX - offsetX, e.clientY - offsetY];
+                    
+                    connectPoints(prevPoint, curPoint);
+
+                    prevPoint = curPoint;
+                }
+            }
+
+            canvas.onmouseup = (e) => {
+                inPainting = false;
+            }
+        }
+
+        function connectPoints(prevPoint, curPoint) {
+            ctx.beginPath();
+            ctx.moveTo(prevPoint[0], prevPoint[1]);
+            ctx.lineTo(curPoint[0], curPoint[1]);
+            ctx.stroke();
+        }
+
+    </script>
+</body>
+</html>

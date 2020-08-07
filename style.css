@@ -1,0 +1,22 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+#info {
+    margin-top: 5px;
+    margin-left: 10px;
+}
+
+#info > ul {
+    list-style: none;
+    margin-left: 10px;
+}
+
+#canvas {
+    display: block;
+    border: 2px solid black;
+    margin-left: 10px;
+    margin-right: 10px;
+}
